@@ -49,7 +49,8 @@ namespace Pitaru_Cosmin_Lab5
             customerViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerViewSource")));
             customerViewSource.Source = ctx.Customers.Local;
             customerOrdersViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerOrdersViewSource")));
-            customerOrdersViewSource.Source = ctx.Orders.Local;
+            //customerOrdersViewSource.Source = ctx.Orders.Local;
+            BindDataGrid();
 
             ctx.Customers.Load();
             ctx.Orders.Load();
@@ -69,7 +70,8 @@ namespace Pitaru_Cosmin_Lab5
             customerViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerViewSource")));
             customerViewSource.Source = ctx.Customers.Local;
             customerOrdersViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerOrdersViewSource")));
-            customerOrdersViewSource.Source = ctx.Orders.Local;
+            //customerOrdersViewSource.Source = ctx.Orders.Local;
+            BindDataGrid();
 
             ctx.Customers.Load();
             ctx.Orders.Load();
@@ -181,6 +183,67 @@ namespace Pitaru_Cosmin_Lab5
                     MessageBox.Show(ex.Message);
                 }
             }
+            else
+                if (action == ActionState.Edit)
+            {
+                dynamic selectedOrder = ordersDataGrid.SelectedItem;
+                try
+                {
+                    int curr_id = selectedOrder.OrderId;
+                    var editedOrder = ctx.Orders.FirstOrDefault(s => s.Id == curr_id);
+                    if (editedOrder != null)
+                    {
+                        editedOrder.CustId = Int32.Parse(cmbCustomers.SelectedValue.ToString());
+                        editedOrder.CarId = Convert.ToInt32(cmbInventory.SelectedValue.ToString());
+                        //salvam modificarile
+                        ctx.SaveChanges();
+                    }
+                }
+                catch (DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                BindDataGrid();
+                // pozitionarea pe item-ul curent
+                customerViewSource.View.MoveCurrentTo(selectedOrder);
+            }
+            else if (action == ActionState.Delete)
+            {
+                try
+                {
+                    dynamic selectedOrder = ordersDataGrid.SelectedItem;
+                    int curr_id = selectedOrder.OrderId;
+                    var deletedOrder = ctx.Orders.FirstOrDefault(s => s.Id == curr_id);
+                    if (deletedOrder != null)
+                    {
+                        ctx.Orders.Remove(deletedOrder);
+                        ctx.SaveChanges();
+                        MessageBox.Show("Order Deleted Successfully", "Message");
+                        BindDataGrid();
+                    }
+                }
+                catch (DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+        private void BindDataGrid()
+        {
+            var queryOrder = from ord in ctx.Orders
+                             join cust in ctx.Customers on ord.CustId equals cust.CustId
+                             join inv in ctx.Inventories on ord.CarId equals inv.CarId
+                             select new
+                             {
+                                 ord.Id,
+                                 ord.CarId,
+                                 ord.CustId,
+                                 cust.FirstName,
+                                 cust.LastName,
+                                 inv.Make,
+                                 inv.Color
+                             };
+            customerOrdersViewSource.Source = queryOrder.ToList();
         }
 
         private void btnSave1_Click(object sender, RoutedEventArgs e)
