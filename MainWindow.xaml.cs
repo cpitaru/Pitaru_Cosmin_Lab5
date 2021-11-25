@@ -34,7 +34,7 @@ namespace Pitaru_Cosmin_Lab5
         //using AutoLotModel;
         ActionState action = ActionState.Nothing;
         AutoLotEntitiesModel ctx = new AutoLotEntitiesModel();
-        CollectionViewSource customerViewSource;
+        CollectionViewSource customerViewSource, inventoryViewSource;
 
         public MainWindow()
         {
@@ -110,7 +110,7 @@ namespace Pitaru_Cosmin_Lab5
                 }
                 customerViewSource.View.Refresh();
             }
-            }
+}
 
         private void btnPrev_Click(object sender, RoutedEventArgs e)
         {
@@ -120,6 +120,70 @@ namespace Pitaru_Cosmin_Lab5
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
             customerViewSource.View.MoveCurrentToNext();
+        }
+
+        private void btnNext1_Click(object sender, RoutedEventArgs e)
+        {
+            inventoryViewSource.View.MoveCurrentToNext();
+        }
+
+        private void btnPrev1_Click(object sender, RoutedEventArgs e)
+        {
+            inventoryViewSource.View.MoveCurrentToPrevious();
+        }
+
+        private void btnSave1_Click(object sender, RoutedEventArgs e)
+        {
+            Inventory inventory = null;
+            if (action == ActionState.New)
+            {
+                try
+                {
+                    inventory = new Inventory()
+                    {
+                        Make = makeTextBox.Text.Trim(),
+                        Color = colorTextBox.Text.Trim()
+                    };
+                    ctx.Inventories.Add(inventory);
+                    inventoryViewSource.View.Refresh();
+                    ctx.SaveChanges();
+                }
+                catch (DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                    if (action == ActionState.Edit)
+            {
+                try
+                {
+                    inventory = (Inventory)inventoryDataGrid.SelectedItem;
+                    inventory.Make = makeTextBox.Text.Trim();
+                    inventory.Color = colorTextBox.Text.Trim();
+                    ctx.SaveChanges();
+                }
+                catch (DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                inventoryViewSource.View.Refresh();
+                inventoryViewSource.View.MoveCurrentTo(inventory);
+            }
+            else if (action == ActionState.Delete)
+            {
+                try
+                {
+                    inventory = (Inventory)inventoryDataGrid.SelectedItem;
+                    ctx.Inventories.Remove(inventory);
+                    ctx.SaveChanges();
+                }
+                catch (DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                inventoryViewSource.View.Refresh();
+            }
         }
     }
 }
