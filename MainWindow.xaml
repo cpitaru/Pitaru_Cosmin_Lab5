@@ -10,6 +10,7 @@
     <Window.Resources>
         <CollectionViewSource x:Key="customerViewSource" d:DesignSource="{d:DesignInstance {x:Type AutoLotModel:Customer}, CreateList=True}"/>
         <CollectionViewSource x:Key="inventoryViewSource" d:DesignSource="{d:DesignInstance {x:Type AutoLotModel:Inventory}, CreateList=True}"/>
+        <CollectionViewSource x:Key="customerOrdersViewSource" Source="{Binding Orders, Source={StaticResource customerViewSource}}"/>
     </Window.Resources>
     <Grid>
         <TabControl x:Name="tbCtrlAutoLot">
@@ -92,7 +93,52 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Orders" Margin="0,-2,0,0">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5" DataContext="{StaticResource customerOrdersViewSource}">
+                    <ComboBox x:Name="cmbCustomers" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="142,68,0,0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="FirstName"/>
+                                            <Binding Path="LastName"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox x:Name="cmbInventory" HorizontalAlignment="Left" Margin="476,68,0,0" VerticalAlignment="Top" Width="120">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} - {1}">
+                                            <Binding Path="Make"/>
+                                            <Binding Path="Color"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Label x:Name="labelCustomers" Content="Customers" HorizontalAlignment="Left" Margin="156,46,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="labelInventory" Content="Inventory" HorizontalAlignment="Left" Margin="508,46,0,0" VerticalAlignment="Top"/>
+                    <DataGrid x:Name="ordersDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="142,126,190,148" RowDetailsVisibilityMode="VisibleWhenSelected">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="carIdColumn1" Binding="{Binding CarId}" Header="Car Id" Width="SizeToHeader"/>
+                            <DataGridTextColumn x:Name="custIdColumn1" Binding="{Binding CustId}" Header="Cust Id" Width="SizeToHeader"/>
+                            <DataGridTextColumn x:Name="idColumn" Binding="{Binding Id}" Header="Id" Width="SizeToHeader"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="btnNew2" Content="New" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="26,46,0,0"/>
+                    <Button x:Name="btnEdit2" Content="Edit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="26,84,0,0"/>
+                    <Button x:Name="btnDelete2" Content="Delete" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="26,126,0,0"/>
+                    <Button x:Name="btnSave2" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="26,180,0,0" Click="btnSave2_Click"/>
+                    <Button x:Name="btnCancel2" Content="Cancel" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="26,223,0,0"/>
+                    <Button x:Name="btnPrev2" Content="Previous" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="142,268,0,0"/>
+                    <Button x:Name="btnNext2" Content="Next" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="521,268,0,0"/>
+                </Grid>
             </TabItem>
         </TabControl>
 

@@ -35,6 +35,7 @@ namespace Pitaru_Cosmin_Lab5
         ActionState action = ActionState.Nothing;
         AutoLotEntitiesModel ctx = new AutoLotEntitiesModel();
         CollectionViewSource customerViewSource, inventoryViewSource;
+        CollectionViewSource customerOrdersViewSource;
 
         public MainWindow()
         {
@@ -47,7 +48,19 @@ namespace Pitaru_Cosmin_Lab5
             //using System.Data.Entity;
             customerViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerViewSource")));
             customerViewSource.Source = ctx.Customers.Local;
+            customerOrdersViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerOrdersViewSource")));
+            customerOrdersViewSource.Source = ctx.Orders.Local;
+
             ctx.Customers.Load();
+            ctx.Orders.Load();
+            ctx.Inventories.Load();
+
+            cmbCustomers.ItemsSource = ctx.Customers.Local;
+            //cmbCustomers.DisplayMemberPath = "FirstName";
+            cmbCustomers.SelectedValuePath = "CustId";
+            cmbInventory.ItemsSource = ctx.Inventories.Local;
+            //cmbInventory.DisplayMemberPath = "Make";
+            cmbInventory.SelectedValuePath = "CarId";
         }
 
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
@@ -55,7 +68,19 @@ namespace Pitaru_Cosmin_Lab5
             //using System.Data.Entity;
             customerViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerViewSource")));
             customerViewSource.Source = ctx.Customers.Local;
+            customerOrdersViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerOrdersViewSource")));
+            customerOrdersViewSource.Source = ctx.Orders.Local;
+
             ctx.Customers.Load();
+            ctx.Orders.Load();
+            ctx.Inventories.Load();
+
+            cmbCustomers.ItemsSource = ctx.Customers.Local;
+            //cmbCustomers.DisplayMemberPath = "FirstName";
+            cmbCustomers.SelectedValuePath = "CustId";
+            cmbInventory.ItemsSource = ctx.Inventories.Local;
+            //cmbInventory.DisplayMemberPath = "Make";
+            cmbInventory.SelectedValuePath = "CarId";
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -130,6 +155,32 @@ namespace Pitaru_Cosmin_Lab5
         private void btnPrev1_Click(object sender, RoutedEventArgs e)
         {
             inventoryViewSource.View.MoveCurrentToPrevious();
+        }
+
+        private void btnSave2_Click(object sender, RoutedEventArgs e)
+        {
+            Order order = null;
+            if (action == ActionState.New)
+            {
+                try
+                {
+                    Customer customer = (Customer)cmbCustomers.SelectedItem;
+                    Inventory inventory = (Inventory)cmbInventory.SelectedItem;
+
+                    order = new Order()
+                    {
+                        CustId = customer.CustId,
+                        CarId = inventory.CarId
+                    };
+                    ctx.Orders.Add(order);
+                    customerOrdersViewSource.View.Refresh();
+                    ctx.SaveChanges();
+                }
+                catch(DataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
 
         private void btnSave1_Click(object sender, RoutedEventArgs e)
