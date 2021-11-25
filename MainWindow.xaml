@@ -7,6 +7,17 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <TabControl x:Name="tbCtrlAutoLot">
+            <TabItem Header="Customers">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Inventory">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Orders" Margin="0,-2,0,0">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+
     </Grid>
 </Window>
