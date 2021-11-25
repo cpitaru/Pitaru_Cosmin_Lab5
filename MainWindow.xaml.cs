@@ -24,5 +24,18 @@ namespace Pitaru_Cosmin_Lab5
         {
             InitializeComponent();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Window_Loaded_1(object sender, RoutedEventArgs e)
+        {
+
+            System.Windows.Data.CollectionViewSource customerViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("customerViewSource")));
+            // Load data by setting the CollectionViewSource.Source property:
+            // customerViewSource.Source = [generic data source]
+        }
     }
 }
